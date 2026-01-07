@@ -1,0 +1,39 @@
+zh:
+  menu:
+    access_control: 访问控制
+    account: 客户端认证
+    acl: 客户端授权
+    blacklist: 黑名单
+    monitoring: 监控
+    clients: 客户端
+    client_detail: 客户端详情
+    subscriptions: 订阅管理
+    retained_messages: 保留消息
+    metrics: 指标
+  version: '版本号：V{ version }'
+en:
+  menu:
+    access_control: Access Control
+    account: Client Authentication
+    acl: Client Authorization
+    blacklist: Blacklist
+    monitoring: Monitoring
+    clients: Clients
+    client_detail: Client Details
+    subscriptions: Subscription Management
+    retained_messages: Retained Messages
+    metrics: Metrics
+  version: 'Version: V{ version }'
+es:
+  menu:
+    access_control: Control de Acceso
+    account: Autenticación de Clientes
+    acl: Autorización de Clientes
+    blacklist: Lista Negra
+    monitoring: Monitoring
+    clients: Clientes
+    client_detail: Detalles del Cliente
+    subscriptions: Gestión de Suscripciones
+    retained_messages: Mensajes Retenidos
+    metrics: Métricas
+  version: 'Versión: V{ version }'

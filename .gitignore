@@ -1,0 +1,6 @@
+/.idea
+/dist
+/web/static
+/ui/*.yaml
+/ui/node_modules
+taskfile.yml

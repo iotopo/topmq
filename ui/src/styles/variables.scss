@@ -1,0 +1,33 @@
+/***************************
+ * 项目级全局变量
+ ***************************/
+
+// 边框色
+// $--color-line1-3: #a8a8a8;
+
+:root {
+  // 标题导航栏
+  --tp-topbar-bg-color: #262f3e;
+  // --tp-topbar-bg-color: #162c4b;
+  --tp-topbar-shadow-color: #344258;
+  --tp-topbar-text-color: #c1c6c8;
+
+  // 菜单
+  --tp-menu-collapsed-width: 54px;
+  --tp-menu-bg-color: #1e222d;
+  --tp-menu-hover-bg-color: #262f3e;
+  --tp-submenu-bg-color: #151822;
+  --tp-menu-text-color: #c1c6c8;
+  --tp-menu-hover-text-color: #c1c6c8;
+  --tp-menu-active-color: #fff;
+  // --tp-menu-active-bg-color: var(--el-color-primary);
+  --tp-menu-item-height: 40px;
+  --tp-menu-sub-item-height: 40px;
+
+  // 头部高度
+  --tp-header-height: 48px;
+  // 左边宽度
+  --tp-left-side-bar-width: 200px;
+  // 头部Tab导航高度
+  --tp-header-tab-nav-height: 36px;
+}
