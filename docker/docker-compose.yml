@@ -1,0 +1,53 @@
+version: "3"
+services:
+  redis:
+    restart: always
+    image: redis:6-alpine
+    container_name: redis
+    command: redis-server --requirepass iotopo_topstack
+    # command: redis-server --requirepass iotopo_topstack --slave-read-only no
+    # command: redis-server /usr/local/etc/redis/redis.conf
+    # ports:
+    #   - "6379:6379"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  influxdb:
+    restart: always
+    image: influxdb:1.8-alpine
+    container_name: influxdb
+    privileged: true
+    # ports:
+    #   - 8086:8086
+    #   - 8088:8088
+    volumes:
+      - ./influxdb:/var/lib/influxdb
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  topmq:
+    restart: always
+    image: topmq:1.0.0
+    container_name: topmq
+#    network_mode: host
+    ports:
+      - "8080:80"
+      - "1883:1883"
+    depends_on:
+      - influxdb
+      - redis
+    volumes:
+      - ./db:/iotopo/topstack/db
+      - ./tls:/iotopo/topstack/tls
+      - ./config.yml:/app/config.yml:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
