@@ -1,6 +1,6 @@
 # TopMQ
 
-[English](https://github.com/iotopo/topmq/blog/main/README.md) [简体中文](https://github.com/iotopo/topmq/blog/main/README-CN.md)
+[English](https://github.com/iotopo/topmq/blob/main/README.md) [简体中文](https://github.com/iotopo/topmq/blob/main/README-CN.md)
 
 TopMQ 是一个基于 [Mochi MQTT Server](https://github.com/mochi-mqtt/server) 实现的高性能 MQTT 5.0 Broker，提供了完整的 Web UI 管理控制台，支持客户端认证、授权、黑名单管理、实时监控等功能。
 

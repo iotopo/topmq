@@ -4,7 +4,8 @@ logger:
   fileLog: true
   level: warn
 mqttServer:
-  port: 1883
+  tcpPort: 1883
+#  wsPort: 1885
   tls: false
   ipAddresses:
     - 127.0.0.1
