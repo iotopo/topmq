@@ -56,7 +56,7 @@ class MonitoringService extends BaseApi {
   }
 
   closeClient(clientID: string): Promise<void> {
-    return this.http.post(`clients/${clientID}`).json()
+    return this.http.post(`close_client/${clientID}`).json()
   }
 
   getSubscriptions(params: {
@@ -86,6 +86,14 @@ class MonitoringService extends BaseApi {
     payload: string
   }> {
     return this.http.get(`retained_payload`, {
+      searchParams: {
+        topic,
+      },
+    }).json()
+  }
+
+  deleteRetained(topic: string): Promise<void> {
+    return this.http.delete(`retained`, {
       searchParams: {
         topic,
       },

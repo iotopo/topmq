@@ -1,0 +1,37 @@
+minPwdLen: 8
+logger:
+    fileLog: false
+    level: debug
+mqttServer:
+    tcpPort: 1883
+#    wsPort: 1885
+    tls: false
+    ipAddresses:
+        - 127.0.0.1
+    persist: true
+web:
+    debug: false
+    port: 8080
+    tls: false
+    sessionTimeout: 60
+    staticPath: custom
+db:
+    showSQL: true
+    databaseName: topmq
+    databasePath: ./dist/db
+    autoCreateAdmin: false
+    pool:
+        maxOpenConns: 10
+        maxIdleConns: 5
+        connMaxLifetime: 60
+        connMaxIdleTime: 30
+redis:
+    addr: 127.0.0.1:6379
+metrics:
+    enabled: true # 是否启用指标监测
+    type: InfluxDB # 指标数据库类型：InfluxDB 或 OpenGemini
+    address: 127.0.0.1:8086 # 数据库地址
+    username: "" # 用户名（可选）
+    password: "" # 密码（支持加密保存）
+    database: topmq # 数据库名称
+    retention: 3 # 指标数据保存天数

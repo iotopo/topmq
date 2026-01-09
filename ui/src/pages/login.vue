@@ -141,12 +141,12 @@ onMounted(async () => {
     <div class="left" :style="{ background: loginBackgroundColor }">
       <transition name="el-fade-in">
         <div v-show="show1" class="title">
-          图扑物联 TopMQ
+          TopMQ
         </div>
       </transition>
       <transition name="el-fade-in">
         <div v-show="show2" class="sub-title">
-          MQTT 5.0 消息中间件
+          轻量型 MQTT 消息中间件
         </div>
       </transition>
       <div class="bg">

@@ -2,6 +2,7 @@ package mqttserver
 
 import (
 	"context"
+	"github.com/iotopo/topmq/config"
 	"github.com/iotopo/topmq/metrics"
 	"github.com/mochi-mqtt/server/v2/system"
 	"github.com/sirupsen/logrus"
@@ -34,44 +35,46 @@ func saveMetric(ctx context.Context, lastInfo *system.Info) {
 	CurrentMessagesSent = float64(info.MessagesSent-lastInfo.MessagesSent) / period
 	CurrentMessagesDropped = float64(info.MessagesDropped-lastInfo.MessagesDropped) / period
 
-	err := metrics.SaveMetric(metrics.MetricData{
-		Name: "mqtt_server",
-		Fields: map[string]any{
-			"subscriptions": info.Subscriptions,
-			"memory_alloc":  info.MemoryAlloc,
-			"threads":       info.Threads,
-		},
-	}, metrics.MetricData{
-		Name: "mqtt_server_bytes",
-		Fields: map[string]any{
-			"bytes_received": float64(info.BytesReceived-lastInfo.BytesReceived) / period,
-			"bytes_sent":     float64(info.BytesSent-lastInfo.BytesSent) / period,
-		},
-	}, metrics.MetricData{
-		Name: "mqtt_server_clients",
-		Fields: map[string]any{
-			"clients_connected":    info.ClientsConnected,
-			"clients_disconnected": info.ClientsDisconnected,
-		},
-	}, metrics.MetricData{
-		Name: "mqtt_server_messages",
-		Fields: map[string]any{
-			"messages_received": CurrentMessagesReceived,
-			"messages_sent":     CurrentMessagesSent,
-			"messages_dropped":  CurrentMessagesDropped,
-			"inflight":          info.Inflight,
-			"inflight_dropped":  float64(info.InflightDropped-lastInfo.InflightDropped) / period,
-			"retained":          info.Retained,
-		},
-	}, metrics.MetricData{
-		Name: "mqtt_server_packets",
-		Fields: map[string]any{
-			"packets_received": float64(info.PacketsReceived-lastInfo.PacketsReceived) / period,
-			"packets_sent":     float64(info.PacketsSent-lastInfo.PacketsSent) / period,
-		},
-	})
-	if err != nil {
-		logrus.WithError(err).Error("failed to save mqtt server metrics")
+	if config.Conf.Metrics.Enabled {
+		err := metrics.SaveMetric(metrics.MetricData{
+			Name: "mqtt_server",
+			Fields: map[string]any{
+				"subscriptions": info.Subscriptions,
+				"memory_alloc":  info.MemoryAlloc,
+				"threads":       info.Threads,
+			},
+		}, metrics.MetricData{
+			Name: "mqtt_server_bytes",
+			Fields: map[string]any{
+				"bytes_received": float64(info.BytesReceived-lastInfo.BytesReceived) / period,
+				"bytes_sent":     float64(info.BytesSent-lastInfo.BytesSent) / period,
+			},
+		}, metrics.MetricData{
+			Name: "mqtt_server_clients",
+			Fields: map[string]any{
+				"clients_connected":    info.ClientsConnected,
+				"clients_disconnected": info.ClientsDisconnected,
+			},
+		}, metrics.MetricData{
+			Name: "mqtt_server_messages",
+			Fields: map[string]any{
+				"messages_received": CurrentMessagesReceived,
+				"messages_sent":     CurrentMessagesSent,
+				"messages_dropped":  CurrentMessagesDropped,
+				"inflight":          info.Inflight,
+				"inflight_dropped":  float64(info.InflightDropped-lastInfo.InflightDropped) / period,
+				"retained":          info.Retained,
+			},
+		}, metrics.MetricData{
+			Name: "mqtt_server_packets",
+			Fields: map[string]any{
+				"packets_received": float64(info.PacketsReceived-lastInfo.PacketsReceived) / period,
+				"packets_sent":     float64(info.PacketsSent-lastInfo.PacketsSent) / period,
+			},
+		})
+		if err != nil {
+			logrus.WithError(err).Error("failed to save mqtt server metrics")
+		}
 	}
 }
 

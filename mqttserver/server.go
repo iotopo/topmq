@@ -103,6 +103,7 @@ func Run(ctx context.Context) error {
 	if err := server.AddListener(tcp); err != nil {
 		return err
 	}
+	logrus.Infof("mqtt server listening on %s", tcpAddr)
 
 	if conf.WSPort > 0 {
 		wsAddr := fmt.Sprintf(":%d", conf.WSPort)
@@ -115,28 +116,21 @@ func Run(ctx context.Context) error {
 		if err := server.AddListener(ws); err != nil {
 			return err
 		}
+		logrus.Infof("mqtt server websocket listening on %s", wsAddr)
 	}
 	//listeners.TypeSysInfo
 
 	if conf.ExporterPort > 0 {
 		go runExporter(fmt.Sprintf(":%d", conf.ExporterPort))
 	}
-	defer stopServer()
+
+	go RunMetrics(ctx)
 
 	return server.Serve()
 }
 
-//func SetupRouter(_ db.Database, router *gin.Engine) {
-//	router.GET("api/v1/mqtt_server/info", func(c *gin.Context) {
-//		if server == nil {
-//			web.SuccessResponse(c, nil)
-//			return
-//		}
-//		web.SuccessResponse(c, server.Info)
-//	})
-//}
-
-func stopServer() {
+func Close() {
+	logrus.Info("stopping mqtt server")
 	if httpServer != nil {
 		err := httpServer.Close()
 		if err != nil {
@@ -147,16 +141,3 @@ func stopServer() {
 		_ = server.Close()
 	}
 }
-
-//	func Publish(topic string, qos byte, retained bool, payload []byte) error {
-//		return server.Publish(topic, payload, retained, qos)
-//	}
-//
-//	func Subscribe(topic string, qos byte, handler func(topic string, msg []byte, time time.Time)) error {
-//		subscriptionId++
-//		return server.Subscribe(topic, subscriptionId, func(cl *mqtt.Client, sub packets.Subscription, pk packets.Packet) {
-//			handler(pk.TopicName, pk.Payload, time.Now())
-//		})
-//	}
-//
-// var subscriptionId = 0

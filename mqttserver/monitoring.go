@@ -258,6 +258,12 @@ func GetRetained(filter string) []RetainedMessage {
 	return items
 }
 
+func DeleteRetained(topic string) {
+	if server != nil {
+		server.Topics.Retained.Delete(topic)
+	}
+}
+
 func GetRetainedPayload(topic string) []byte {
 	if server == nil {
 		return nil

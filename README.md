@@ -26,7 +26,24 @@ TopMQ is a high-performance MQTT 5.0 Broker built on [Mochi MQTT Server](https:/
 - **Multi-protocol Support** - Simultaneous support for TCP and WebSocket protocols
 - **High Performance** - Built with Go language for excellent performance
 
-## 🚀 Quick Start
+## Installation
+Check out the INSTALLATION guide to get up and running with TopMQ with as little configuration and code as possible.
+
+We recommend installing TopMQ using one of the pre-built packages. Then start TopMQ using:
+
+- systemctl start topmq, and are running a linux distro with systemd. 
+- sc start topmq, if you are running Windows.
+
+By default, TopMQ runs on port 8080.
+
+## With Docker
+To get started right away with Docker, you can pull down our latest release:
+
+```
+docker pull quay.io/iotopo/topmq:latest
+```
+
+## From Source
 
 ### Requirements
 
@@ -124,7 +141,7 @@ Main configuration items:
 
 ```yaml
 mqttServer:
-  port: 1883          # MQTT TCP port
+  tcpPort: 1883       # MQTT TCP port
   wsPort: 1882        # WebSocket port
   tls: false          # Enable TLS
   persist: true       # Enable message persistence

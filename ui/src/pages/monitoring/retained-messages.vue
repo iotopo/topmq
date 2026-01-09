@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Column } from 'element-plus'
 import type { RetainedMessage } from '@/api/monitoring'
-import { Document } from '@element-plus/icons-vue'
+import { Delete, Document } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
-import { ElButton, ElIcon, ElMessage } from 'element-plus'
+import { ElButton, ElIcon, ElMessage, ElMessageBox } from 'element-plus'
 import { computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -12,9 +12,7 @@ import monitoringService from '@/api/monitoring'
 const router = useRouter()
 const { t } = useI18n()
 
-const queryParams = ref<{
-  filter?: string
-}>({
+const queryParams = ref({
   filter: '',
 })
 
@@ -43,11 +41,9 @@ async function loadData() {
       filter: queryParams.value.filter || undefined,
     })
     tableData.value = res || []
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error)
-  }
-  finally {
+  } finally {
     isLoading.value = false
   }
 }
@@ -65,8 +61,7 @@ async function viewPayload(row: RetainedMessage) {
     const resp = await monitoringService.getRetainedPayload(row.topic)
     rawPayload.value = resp.payload || ''
     updateFormattedPayload()
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error)
     ElMessage.error(t('common.error.load'))
     payloadDialogVisible.value = false
@@ -82,8 +77,7 @@ function updateFormattedPayload() {
         try {
           const jsonObj = JSON.parse(decoded)
           formattedPayload.value = JSON.stringify(jsonObj, null, 2)
-        }
-        catch {
+        } catch {
           // 如果不是有效的 JSON，直接显示解码后的文本
           formattedPayload.value = decoded
         }
@@ -109,8 +103,7 @@ function updateFormattedPayload() {
         break
       }
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error formatting payload:', error)
     formattedPayload.value = rawPayload.value
   }
@@ -127,8 +120,30 @@ function copyPayload() {
   ElMessage.success(t('common.success.copy'))
 }
 
+async function deleteRetained(row: RetainedMessage) {
+  try {
+    await ElMessageBox.confirm(
+      t('delete_retained_confirm', { topic: row.topic }),
+      t('common.confirm_delete'),
+      {
+        confirmButtonText: t('common.ok'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning',
+      },
+    )
+    await monitoringService.deleteRetained(row.topic)
+    ElMessage.success(t('global.messages.delete_success'))
+    loadData()
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error(error)
+      ElMessage.error(t('common.error.operate'))
+    }
+  }
+}
+
 function columns(tableWidth: number): Column<RetainedMessage & { _rowKey: string }>[] {
-  const actionWidth = 100
+  const actionWidth = 150
   // 主题列占2倍宽度，其他4列各占1倍，操作列固定100px
   // 总共6个单位：主题2 + QoS1 + 客户端ID1 + 发布时间1 + 过期时间1 = 6个单位
   const colWidth = Math.floor((tableWidth - actionWidth) / 6)
@@ -248,7 +263,7 @@ function columns(tableWidth: number): Column<RetainedMessage & { _rowKey: string
       key: 'actions',
       dataKey: 'topic',
       title: t('common.operation'),
-      width: 100,
+      width: 150,
       cellRenderer: ({ rowData }: { rowData: RetainedMessage }) => {
         return h(
           'div',
@@ -258,7 +273,6 @@ function columns(tableWidth: number): Column<RetainedMessage & { _rowKey: string
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
             },
           },
           [
@@ -267,6 +281,7 @@ function columns(tableWidth: number): Column<RetainedMessage & { _rowKey: string
               {
                 link: true,
                 size: 'small',
+                title: t('view_payload'),
                 onClick: () => viewPayload(rowData),
               },
               {
@@ -276,6 +291,25 @@ function columns(tableWidth: number): Column<RetainedMessage & { _rowKey: string
                     {},
                     {
                       default: () => h(Document),
+                    },
+                  ),
+              },
+            ),
+            h(
+              ElButton,
+              {
+                link: true,
+                size: 'small',
+                title: t('common.delete'),
+                onClick: () => deleteRetained(rowData),
+              },
+              {
+                default: () =>
+                  h(
+                    ElIcon,
+                    {},
+                    {
+                      default: () => h(Delete),
                     },
                   ),
               },
@@ -413,6 +447,7 @@ zh:
   topic: 主题
   qos: QoS
   clientID: 客户端 ID
+  delete_retained_confirm: 确定要删除主题 "{topic}" 的保留消息吗？
 en:
   retained_messages: Retained Messages
   topic_wildcard_hint: Topic (wildcard search supported)
@@ -428,6 +463,7 @@ en:
   topic: Topic
   qos: QoS
   clientID: Client ID
+  delete_retained_confirm: Are you sure you want to delete the retained message for topic "{topic}"?
 es:
   retained_messages: Mensajes Retenidos
   topic_wildcard_hint: Tema (búsqueda con comodines soportada)
@@ -443,4 +479,5 @@ es:
   topic: Tema
   qos: QoS
   clientID: Cliente ID
+  delete_retained_confirm: ¿Está seguro de que desea eliminar el mensaje retenido para el tema "{topic}"?
 </i18n>

@@ -129,26 +129,43 @@ func (h *AuthHook) aclOK(cl *mqtt.Client, topic string, write bool) bool {
 			"clientid": clientID,
 			"username": username,
 		}
+
+		// 黑名单需要后检查
+		var deniedRules []acls.AccessControl
+
 		for _, rule := range aclRules {
+			access := rule.Access
+			if access == "d" {
+				deniedRules = append(deniedRules, rule)
+				continue
+			}
 			ruleTopic := ReplaceVariables(rule.Topic, varMap)
 			if rule.ClientID != "" && rule.ClientID == cl.ID ||
 				rule.Username != "" && rule.Username == username ||
 				(rule.Remote != "" && strings.HasPrefix(cl.Net.Remote, rule.Remote)) {
 				if auth.RString(ruleTopic).FilterMatches(topic) {
-					access := rule.Access
 					if !write && (access == "r" || access == "rw") {
 						return true
 					} else if write && (access == "w" || access == "rw") {
 						return true
-					} else {
-						return false
 					}
+				}
+			}
+		}
+
+		for _, rule := range deniedRules {
+			ruleTopic := ReplaceVariables(rule.Topic, varMap)
+			if rule.ClientID != "" && rule.ClientID == cl.ID ||
+				rule.Username != "" && rule.Username == username ||
+				(rule.Remote != "" && strings.HasPrefix(cl.Net.Remote, rule.Remote)) {
+				if auth.RString(ruleTopic).FilterMatches(topic) {
+					return false
 				}
 			}
 		}
 	}
 
-	return false
+	return true
 }
 
 // OnACLCheck returns true if the connecting client has matching read or write access to subscribe

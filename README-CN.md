@@ -9,7 +9,7 @@ TopMQ 是一个基于 [Mochi MQTT Server](https://github.com/mochi-mqtt/server) 
 ### 核心功能
 - **MQTT 5.0 协议支持** - 完整支持 MQTT 5.0 协议规范
 - **Web UI 管理控制台** - 现代化的 Web 界面，方便管理和监控
-- **客户端认证** - 支持用户名密码认证，可配置认证规则
+- **客户端认证** - 支持用户名密码认证，可配置认证规则，支持基于 Redis 实现扩展认证
 - **客户端授权（ACL）** - 细粒度的主题订阅和发布权限控制
 - **黑名单管理** - 支持 IP 和客户端 ID 黑名单，增强安全性
 - **实时监控** - 实时查看客户端连接状态、订阅信息、消息统计等
@@ -25,7 +25,37 @@ TopMQ 是一个基于 [Mochi MQTT Server](https://github.com/mochi-mqtt/server) 
 - **多协议支持** - 同时支持 TCP 和 WebSocket 协议
 - **高性能** - 基于 Go 语言实现，性能优异
 
-## 🚀 快速开始
+## 安装部署
+
+查看[安装指南](http://www.iotopo/topmq/docs)，以最少的配置和代码快速启动和运行 TopMQ。
+
+我们建议使用预构建的软件包来安装 TopMQ。然后使用以下命令启动 TopMQ：
+
+- systemctl start topmq（如果您使用的是支持 systemd 的 Linux 发行版）
+- sc start topmq（如果您使用的是 windows 操作系统）
+
+默认情况下，TopMQ 运行在端口 8080 上。
+
+[下载 Windwos 安装包](https://www.iotopo.com/download/topmq-latest-windows-amd64.zip)
+
+[下载 Linux 安装包](https://www.iotopo.com/download/topmq-latest-linux-amd64.tar.gz)
+
+## 基于 Docker 运行
+要使用 Docker 方式运行，您可以拉取我们的最新版本：
+
+```
+docker pull quay.io/iotopo/topmq:latest
+```
+
+我们提供了一个可以运行完整版本的 [docker-compose.yml](https://github.com/iotopo/topmq/blob/main/docker/docker-compose.yml)，您可以直接使用以下命令启动：
+
+```
+docker compose up -d
+```
+
+[下载 Docker 程序包](https://www.iotopo.com/download/topmq-latest-docker-compose.zip)
+
+## 基于源码运行
 
 ### 环境要求
 
@@ -57,11 +87,10 @@ cp dist/config.yml ./config.yml
 ```
 
 主要配置项：
-- `mqttServer.port`: MQTT TCP 端口（默认：1883）
-- `mqttServer.wsPort`: WebSocket 端口（默认：1882）
+- `mqttServer.tcpPort`: MQTT TCP 端口（默认：1883）
+- `mqttServer.wsPort`: WebSocket 端口
 - `web.port`: Web UI 端口（默认：8080）
 - `redis.addr`: Redis 地址（默认：127.0.0.1:6379）
-- `db.databaseType`: 数据库类型（默认：sqlite）
 
 5. **运行应用**
 ```bash
@@ -89,7 +118,8 @@ pnpm dev
 
 构建前端：
 ```bash
-pnpm build
+cd ui
+npx vite build --base=/ --emptyOutDir --outDir=../web/static
 ```
 
 ## 📖 使用说明
@@ -123,7 +153,7 @@ pnpm build
 
 ```yaml
 mqttServer:
-  port: 1883          # MQTT TCP 端口
+  tcpPort: 1883       # MQTT TCP 端口
   wsPort: 1882        # WebSocket 端口
   tls: false          # 是否启用 TLS
   persist: true       # 是否启用消息持久化

@@ -59,6 +59,21 @@ func setupMonitoringRouter(router gin.IRouter) {
 		items := GetRetained(req.Filter)
 		web.SuccessResponse(c, items)
 	})
+	api.DELETE("retained", func(c *gin.Context) {
+		var req struct {
+			Topic string `form:"topic" binding:"required"`
+		}
+		if err := c.ShouldBind(&req); err != nil {
+			web.BadRequestResponse(c, err.Error())
+			return
+		}
+		if req.Topic == "" {
+			web.BadRequestResponse(c, "topic is required")
+			return
+		}
+		DeleteRetained(req.Topic)
+		web.SuccessResponse(c, nil)
+	})
 	api.GET("retained_payload", func(c *gin.Context) {
 		var req struct {
 			Topic string `form:"topic" binding:"required"`

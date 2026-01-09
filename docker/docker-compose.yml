@@ -33,7 +33,7 @@ services:
 
   topmq:
     restart: always
-    image: topmq:1.0.0
+    image: quay.io/iotopo/topmq:latest
     container_name: topmq
 #    network_mode: host
     ports:

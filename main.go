@@ -60,6 +60,7 @@ func run() {
 }
 
 func stop() {
+	mqttserver.Close()
 	cancel()
 	db.Close()
 	cache.Close()
